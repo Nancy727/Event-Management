@@ -1,0 +1,4 @@
+# Wedding Decoration Image Placeholder
+# This represents a beautiful wedding mandap decoration
+# Resolution: 800x600
+# Location: src/assets/images/wedding-decor-1.jpg (would be actual image)

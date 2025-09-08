@@ -6,8 +6,6 @@ import Hero from './components/Hero';
 import Gallery from './components/Gallery';
 import AboutPage from './components/AboutPage';
 import ContactPage from './components/ContactPage';
-import './App.css';
-
 // Page transition wrapper component
 const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -50,13 +48,15 @@ const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) =
     });
   }, [location]);
   
-  return <div className="page-content">{children}</div>;
+  return (
+    <div className="w-full min-h-screen transition-all duration-300">{children}</div>
+  );
 };
 
 function App() {
   return (
     <Router>
-      <div className="App">
+      <div className="min-h-screen w-full overflow-x-hidden bg-black text-white relative">
         <AnimatePresence mode="wait">
           <Routes>
             {/* Homepage - Only Hero section with navigation links */}

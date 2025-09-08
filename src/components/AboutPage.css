@@ -35,6 +35,13 @@
   transform: translateX(-5px);
 }
 
+.count-up-text {
+  font-family: var(--font-decorative), sans-serif;
+  font-weight: bold;
+  font-size: 2.3rem;
+}
+
+
 .about-header h1 {
   font-size: 4rem;
   font-weight: 300;
@@ -145,7 +152,10 @@
 }
 
 .stat-card {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 2rem 1rem;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
@@ -153,6 +163,7 @@
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
+
 
 .stat-card:hover {
   transform: translateY(-5px);

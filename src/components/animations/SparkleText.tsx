@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import '../styles/sparkle.css';
+
 
 interface SparkleTextProps {
   children: React.ReactNode;

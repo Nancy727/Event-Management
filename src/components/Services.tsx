@@ -53,8 +53,8 @@ const Services: React.FC = () => {
 
 
   return (
-    <section id="services" className="relative overflow-hidden bg-black">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,rgba(212,175,55,0.03)_0%,transparent_50%),radial-gradient(circle_at_90%_80%,rgba(192,192,192,0.02)_0%,transparent_50%)] z-0"></div>
+    <section id="services" className="relative overflow-hidden bg-black min-h-screen">
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-yellow-900/10 z-0"></div>
       
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
         <motion.div

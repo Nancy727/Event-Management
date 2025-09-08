@@ -147,7 +147,7 @@ const ContactPage: React.FC = () => {
       <div className="opacity-0 contact-container">
         {/* Header */}
         <motion.header
-          className="py-32 pb-24 bg-yellow-500/5 backdrop-blur-lg border-b border-yellow-500"
+          className="py-32 bg-yellow-500/5 backdrop-blur-lg border-b border-yellow-500/20"
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -158,7 +158,7 @@ const ContactPage: React.FC = () => {
               Back to Home
             </Link>
             <div className="contact-header">
-              <h1 className="text-5xl md:text-6xl font-light mb-4 bg-gradient-to-r from-yellow-500 to-yellow-200 bg-clip-text text-transparent text-center font-serif tracking-tight animate-[sparkle_3s_ease-in-out_infinite]">
+              <h1 className="text-5xl md:text-6xl font-light mb-4 text-yellow-500 text-center font-serif tracking-tight">
                 Contact Sintu Decorators
               </h1>
             </div>
@@ -170,7 +170,7 @@ const ContactPage: React.FC = () => {
 
         {/* Services Overview */}
         <motion.section
-          className="py-16 bg-white/5"
+          className="py-24 bg-white/5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -180,10 +180,10 @@ const ContactPage: React.FC = () => {
               {services.map((service, index) => (
                 <motion.div
                   key={service.name}
-                  className="contact-item text-center p-8 bg-black/80 rounded-2xl border border-yellow-500/20 backdrop-blur-lg transition-all duration-300 hover:bg-black/90 hover:border-yellow-500 hover:shadow-xl hover:shadow-yellow-500/20"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
+                  className="group p-8 bg-zinc-900/80 backdrop-blur-xl border border-yellow-500/10 rounded-xl transition-all duration-300 hover:border-yellow-500/20 hover:bg-zinc-900/90 hover:-translate-y-2"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
                 >
                   <service.icon size={32} className="text-white mb-4 mx-auto" />
                   <h3 className="text-xl font-bold text-white mb-2">{service.name}</h3>
@@ -212,7 +212,7 @@ const ContactPage: React.FC = () => {
               
               {/* Contact Form */}
               <motion.div 
-                className="contact-item text-center p-12 bg-black/80 rounded-2xl border border-yellow-500/20 backdrop-blur-lg transition-all duration-300 hover:bg-black/90 hover:border-yellow-500 hover:shadow-xl hover:shadow-yellow-500/20"
+                className="p-8 lg:p-12 bg-zinc-900/80 backdrop-blur-xl border border-yellow-500/10 rounded-xl transition-all duration-300 hover:border-yellow-500/20 hover:bg-zinc-900/90"
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 1.0 }}
@@ -337,7 +337,7 @@ const ContactPage: React.FC = () => {
 
                     <motion.button
                       type="submit"
-                      className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-semibold rounded-lg hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20"
+                      className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-yellow-500 text-black rounded-lg font-medium tracking-wide transition-all hover:bg-yellow-600"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
@@ -363,7 +363,7 @@ const ContactPage: React.FC = () => {
                     {contactInfo.map((method, index) => (
                       <motion.div
                         key={method.title}
-                        className="flex items-start gap-4 p-4 bg-white/5 rounded-lg border border-yellow-500/10 hover:border-yellow-500/20 transition-all"
+                        className="group p-8 bg-zinc-900/80 backdrop-blur-xl border border-yellow-500/10 rounded-xl transition-all duration-300 hover:border-yellow-500/20 hover:bg-zinc-900/90 hover:-translate-y-1"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 1.4 + index * 0.1 }}
@@ -389,7 +389,7 @@ const ContactPage: React.FC = () => {
                       <motion.a
                         key={social.label}
                         href={social.href}
-                        className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white border border-white/20 hover:bg-white/20 hover:border-yellow-500/50 transition-all"
+                        className="w-12 h-12 bg-yellow-500/10 rounded-lg flex items-center justify-center text-yellow-500 transition-all hover:bg-yellow-500 hover:text-black"
                         whileHover={{ scale: 1.1, y: -2 }}
                         whileTap={{ scale: 0.95 }}
                         initial={{ opacity: 0, scale: 0.8 }}
@@ -428,7 +428,7 @@ const ContactPage: React.FC = () => {
                   123 Event Street, Bandra West<br />Mumbai, Maharashtra 400050
                 </p>
                 <motion.button 
-                  className="inline-flex items-center gap-2 py-3 px-6 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-semibold rounded-lg hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-yellow-500 text-black rounded-lg font-medium tracking-wide transition-all hover:bg-yellow-600"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

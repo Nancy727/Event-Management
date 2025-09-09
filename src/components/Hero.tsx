@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import CardSwap, { Card } from './TextAnimations/CardSwap/CardSwap';
 
 const Hero: React.FC = () => {
   return (
@@ -21,7 +22,8 @@ const Hero: React.FC = () => {
       </div>
 
       <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-8 lg:px-12 h-screen flex flex-col justify-center">
-        <div className="max-w-3xl">
+        <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-16 items-center">
+          <div className="max-w-3xl">
           <motion.h1 
             className="text-6xl md:text-7xl lg:text-8xl font-light text-white mb-8 font-playfair sparkle-text"
             initial={{ opacity: 0, y: 50 }}
@@ -85,6 +87,49 @@ const Hero: React.FC = () => {
               </Link>
             </motion.div>
           </motion.div>
+          </div>
+          {/* CardSwap visual beside hero text on large screens */}
+          <div className="relative hidden xl:block">
+            <CardSwap
+              width={620}
+              height={520}
+              cardDistance={60}
+              verticalDistance={80}
+              delay={3500}
+              skewAmount={4}
+              easing="elastic"
+              containerClassName="flex justify-center"
+            >
+              <Card className="bg-gradient-to-br from-yellow-500/10 to-yellow-700/5 border-yellow-500/30 p-6 flex flex-col justify-between shadow-[0_0_25px_-5px_rgba(234,179,8,0.25)]">
+                <div>
+                  <h3 className="text-2xl font-serif text-yellow-400 mb-4">Weddings</h3>
+                  <p className="text-sm text-gray-300 leading-relaxed">Elegant mandaps, floral artistry, and immersive ambience design for unforgettable ceremonies.</p>
+                </div>
+                <span className="mt-6 text-xs tracking-widest text-yellow-500/70 uppercase">Signature Experience</span>
+              </Card>
+              <Card className="bg-gradient-to-br from-yellow-500/5 to-yellow-700/5 border-yellow-500/20 p-6 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-2xl font-serif text-yellow-400 mb-4">Corporate</h3>
+                  <p className="text-sm text-gray-300 leading-relaxed">Premium staging, lighting design, and thematic brand environments for high-impact events.</p>
+                </div>
+                <span className="mt-6 text-xs tracking-widest text-yellow-500/60 uppercase">Professional Detail</span>
+              </Card>
+              <Card className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border-yellow-500/25 p-6 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-2xl font-serif text-yellow-400 mb-4">Social</h3>
+                  <p className="text-sm text-gray-300 leading-relaxed">Birthday, anniversary & milestone celebrations elevated with bespoke styling and mood curation.</p>
+                </div>
+                <span className="mt-6 text-xs tracking-widest text-yellow-500/60 uppercase">Celebration Craft</span>
+              </Card>
+              <Card className="bg-gradient-to-br from-yellow-500/5 to-yellow-700/10 border-yellow-500/20 p-6 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-2xl font-serif text-yellow-400 mb-4">Luxury Design</h3>
+                  <p className="text-sm text-gray-300 leading-relaxed">Custom-built installations, layered textures, and atmospheric storytelling through decor.</p>
+                </div>
+                <span className="mt-6 text-xs tracking-widest text-yellow-500/60 uppercase">Curated Aesthetics</span>
+              </Card>
+            </CardSwap>
+          </div>
         </div>
 
         {/* Navigation Links */}

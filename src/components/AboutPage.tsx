@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import gsap from "gsap";
 import CountUp from "./TextAnimations/CountUp/CountUp";
+import ShinyText from "./TextAnimations/ShinyText/ShinyText";
 
 const AboutPage: React.FC = () => {
   useEffect(() => {
@@ -164,18 +165,23 @@ const AboutPage: React.FC = () => {
       <div className="relative">
         {/* Header */}
         <motion.header
-          className="py-32 pb-24 bg-yellow-500/5 backdrop-blur-lg border-b border-yellow-500"
+          className="py-10 pb-24 bg-yellow-500/5 backdrop-blur-lg border-b border-yellow-500"
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-            <Link to="/" className="inline-flex items-center gap-2 text-yellow-200 no-underline font-normal mb-8 py-3 px-6 rounded-md border border-yellow-500 transition-all duration-300 hover:bg-yellow-500 hover:text-black hover:-translate-x-1 hover:shadow-lg hover:shadow-yellow-500/20">
+            <Link to="/" className="inline-flex items-center gap-2 text-yellow-200 no-underline font-normal ml-8 mb-12 py-3 px-6 rounded-md border border-yellow-500 transition-all duration-300 hover:bg-yellow-500 hover:text-black hover:-translate-x-1 hover:shadow-lg hover:shadow-yellow-500/20">
               <ArrowLeft size={20} />
               Back to Home
             </Link>
+          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
             <h1 className="text-5xl md:text-6xl font-light mb-4 text-yellow-500 text-center font-serif tracking-tight">
-              About Sintu Decorators
+              <ShinyText
+                text="About Sintu Decorators"
+                disabled={false}
+                speed={3}
+                className="inline-block"
+              />
             </h1>
             <p className="text-lg md:text-xl text-gray-300 text-center max-w-2xl mx-auto">
               Excellence in Event Management Since 1999

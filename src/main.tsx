@@ -1,10 +1,19 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import ClickSpark from "./components/TextAnimations/ClickSpark/ClickSpark";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+    <ClickSpark
+      sparkColor="#D4AF37"
+      sparkSize={12}
+      sparkRadius={22}
+      sparkCount={10}
+      duration={500}
+    >
+      <App />
+    </ClickSpark>
+  </StrictMode>
+);

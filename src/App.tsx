@@ -1,30 +1,25 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
+import { useEffect } from 'react';
 import Hero from './components/Hero';
 import Gallery from './components/Gallery';
 import AboutPage from './components/AboutPage';
 import ContactPage from './components/ContactPage';
-// Page transition wrapper component
+import { AnimatePresence } from 'framer-motion';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+
 const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   
   useEffect(() => {
-    // Reset scroll position
     window.scrollTo(0, 0);
     
-    // Create a timeline for smooth transitions
     const tl = gsap.timeline();
     
-    // Initial state
     gsap.set('.page-content', {
       opacity: 0,
       y: 50,
     });
     
-    // Smooth page transition sequence
     tl.to('.transition-overlay', {
       yPercent: 0,
       duration: 0.8,

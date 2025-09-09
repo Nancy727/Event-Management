@@ -1,9 +1,12 @@
 import gsap from 'gsap';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Hero from './components/Hero';
 import Gallery from './components/Gallery';
 import AboutPage from './components/AboutPage';
 import ContactPage from './components/ContactPage';
+import Navigation from './components/Navigation';
+import SplashScreen from './components/SplashScreen';
+import VideoSplashScreen from './components/VideoSplashScreen';
 import { AnimatePresence } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
@@ -48,17 +51,40 @@ const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) =
 };
 
 function App() {
+  const [showVideoSplash, setShowVideoSplash] = useState(true);
+  const [showImageSplash, setShowImageSplash] = useState(false);
+
+  const handleVideoSplashComplete = () => {
+    setShowVideoSplash(false);
+    setShowImageSplash(true);
+  };
+
+  const handleImageSplashComplete = () => {
+    setShowImageSplash(false);
+  };
+
+  // First show video splash screen
+  if (showVideoSplash) {
+    return <VideoSplashScreen onComplete={handleVideoSplashComplete} />;
+  }
+  
+  // Then show image splash screen
+  if (showImageSplash) {
+    return <SplashScreen onComplete={handleImageSplashComplete} />;
+  }
+
   return (
     <Router>
       <div className="min-h-screen w-full overflow-x-hidden bg-black text-white relative">
         <AnimatePresence mode="wait">
           <Routes>
-            {/* Homepage - Only Hero section with navigation links */}
+            {/* Homepage - Hero with bottom navigation */}
             <Route 
               path="/" 
               element={
                 <PageTransition>
                   <Hero />
+                  <Navigation />
                 </PageTransition>
               } 
             />
@@ -92,6 +118,7 @@ function App() {
                 </PageTransition>
               } 
             />
+
           </Routes>
         </AnimatePresence>
       </div>

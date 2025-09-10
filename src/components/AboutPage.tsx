@@ -19,6 +19,21 @@ import gsap from "gsap";
 import CountUp from "./TextAnimations/CountUp/CountUp";
 import ShinyText from "./TextAnimations/ShinyText/ShinyText";
 
+// Import team member images
+import sintuImage from '../assets/images/family/Sintu.jpeg';
+import aprajitaImage from '../assets/images/family/Aprajita.jpeg';
+import sangitaImage from '../assets/images/family/sangita.jpg';
+
+// Define the type for team members
+interface TeamMember {
+  name: string;
+  role: string;
+  experience: string;
+  description: string;
+  image: string;
+  imagePosition?: string;
+}
+
 const AboutPage: React.FC = () => {
   useEffect(() => {
     // GSAP page entrance animation
@@ -110,25 +125,29 @@ const AboutPage: React.FC = () => {
     },
   ];
 
-  const teamMembers = [
+  const teamMembers: TeamMember[] = [
     {
-      name: "Sintu Kumar",
+      name: "Amit Kumar Chourasia",
       role: "Founder & CEO",
       experience: "25+ Years",
       description:
         "Visionary leader with passion for creating memorable experiences",
+      image: sintuImage
     },
     {
       name: "Aprajita Devi",
       role: "Event Designer",
       experience: "20+ Years",
       description: "Creative expert in transforming venues into magical spaces",
+      image: aprajitaImage
     },
     {
       name: "Sangita Devi",
       role: "Catering Head",
       experience: "25+ Years",
       description: "Culinary master specializing in multi-cuisine preparations",
+      image: sangitaImage,
+      imagePosition: "0% 30%" // Position image to show the face properly
     },
   ];
 
@@ -334,9 +353,25 @@ const AboutPage: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 1.6 + index * 0.1 }}
                 >
-                  <div className="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Users size={32} className="text-yellow-500" />
-                  </div>
+                  {member.name === "Sangita Devi" ? (
+                    // Custom styling for Sangita's image
+                    <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 border-2 border-yellow-500/30 shadow-lg shadow-yellow-500/20">
+                      <img 
+                        src={member.image} 
+                        alt={member.name} 
+                        className="w-full h-full object-cover object-top scale-[1.2]"
+                      />
+                    </div>
+                  ) : (
+                    // Normal styling for other team members
+                    <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 border-2 border-yellow-500/30 shadow-lg shadow-yellow-500/20">
+                      <img 
+                        src={member.image} 
+                        alt={member.name} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
                   <h3 className="text-2xl text-yellow-500 mb-2 font-light">{member.name}</h3>
                   <h4 className="text-gray-300 mb-2 font-medium">{member.role}</h4>
                   <span className="inline-block px-3 py-1 bg-yellow-500/10 text-yellow-500 text-sm rounded-full mb-4">
@@ -410,7 +445,7 @@ const AboutPage: React.FC = () => {
                 </div>
                 <h3 className="text-2xl text-yellow-500 mb-4 font-light">Company Introduction</h3>
                 <p className="text-gray-300 text-sm leading-relaxed">
-                  Watch our story unfold through 15 years of excellence
+                  Watch our story unfold through 25 years of excellence
                 </p>
               </motion.div>
               <motion.div
@@ -436,8 +471,7 @@ const AboutPage: React.FC = () => {
                 </div>
                 <h3 className="text-2xl text-yellow-500 mb-4 font-light">Awards & Recognition</h3>
                 <p className="text-gray-300 text-sm leading-relaxed">
-                  Recognized as one of the top event management companies in
-                  Mumbai for three consecutive years.
+                  Recognized as top event management in Munger district by Municipal Corporation and Mungroura Durga Puja Corporation.
                 </p>
               </motion.div>
             </div>

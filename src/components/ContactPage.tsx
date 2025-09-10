@@ -85,7 +85,7 @@ const ContactPage: React.FC = () => {
     {
       icon: Phone,
       title: 'Phone',
-      details: ['+91 98765 43210', '+91 87654 32109'],
+      details: ['+91 8969207777', '+91 7646055208'],
       action: 'Call Now'
     },
     {
@@ -97,13 +97,13 @@ const ContactPage: React.FC = () => {
     {
       icon: MapPin,
       title: 'Address',
-      details: ['123 Event Street, Bandra West', 'Mumbai, Maharashtra 400050', 'India'],
+      details: ['Near Shiv Mandir, Mungroura', 'Jamalpur, Dist. Munger', 'Bihar, India'],
       action: 'Get Directions'
     },
     {
       icon: Clock,
       title: 'Working Hours',
-      details: ['Mon - Fri: 9:00 AM - 7:00 PM', 'Sat - Sun: 10:00 AM - 6:00 PM'],
+      details: ['Mon - Fri: 9:00 AM - 7:00 PM', 'Sat - Sun: Closed'],
       action: 'Schedule Meeting'
     }
   ];
@@ -415,21 +415,24 @@ const ContactPage: React.FC = () => {
                 <Navigation size={48} className="text-white mb-6 mx-auto" />
                 <h4 className="text-2xl font-semibold text-white mb-4">Sintu Decorators</h4>
                 <p className="text-gray-300 leading-relaxed mb-6">
-                  123 Event Street, Bandra West<br />Mumbai, Maharashtra 400050
+                  Near Shiv Mandir, Mungroura<br />Jamalpur, Dist. Munger<br />Bihar, India
                 </p>
-                <motion.button 
+                <motion.a 
+                  href="https://maps.app.goo.gl/GAegoYdErAgYJS8u9"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-yellow-500 text-black rounded-lg font-medium tracking-wide transition-all hover:bg-yellow-600"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <MapPin size={16} />
                   Open in Google Maps
-                </motion.button>
+                </motion.a>
               </div>
               {/* In a real application, you would integrate with Google Maps API */}
               <div className="lg:col-span-2 contact-item bg-black/80 rounded-2xl border border-yellow-500/20 backdrop-blur-lg overflow-hidden transition-all duration-300 hover:bg-black/90 hover:border-yellow-500 hover:shadow-xl hover:shadow-yellow-500/20">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.0234374234!2d72.8260621!3d19.0544472!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDAzJzE2LjAiTiA3Mso0OSczMy44IkU!5e0!3m2!1sen!2sin!4v1234567890"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3635.9474252645223!2d86.49740451744384!3d25.307155199999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f1ef8e6e7b29bd%3A0xcb60fa302503ac6c!2sShiv%20Mandir!5e0!3m2!1sen!2sin!4v1693900083379!5m2!1sen!2sin"
                   width="100%"
                   height="400"
                   style={{ border: 0 }}

@@ -128,13 +128,40 @@ const VideoSplashScreen: React.FC<VideoSplashScreenProps> = ({ onComplete }) => 
                 className="absolute inset-0 flex items-center justify-center cursor-pointer"
                 onClick={handlePlayWithSound}
               >
-                <div className="bg-amber-500/80 rounded-full p-6 transform transition-transform hover:scale-110">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15.536a5 5 0 010-7.072m12.728 0a9 9 0 010 12.728M3 9.728c.764-1.068 1.431-2.172 1.728-3.272M21 16.272c-.764 1.068-1.431 2.172-1.728 3.272" />
-                  </svg>
-                </div>
-                <div className="absolute bottom-16 text-white text-xl font-semibold">
-                  Tap for Sound
+                <div className="bg-black/40 backdrop-blur-sm w-full h-full absolute inset-0 flex items-center justify-center">
+                  <div className="relative flex flex-col items-center">
+                    <motion.div 
+                      className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30 border border-amber-300/20"
+                      whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(245, 158, 11, 0.5)" }}
+                      whileTap={{ scale: 0.98 }}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ 
+                        opacity: 1, 
+                        scale: 1,
+                        transition: { 
+                          duration: 0.5,
+                          repeat: Infinity,
+                          repeatType: "reverse",
+                          repeatDelay: 0.5
+                        }
+                      }}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15.536a5 5 0 010-7.072m12.728 0a9 9 0 010 12.728M3 9.728c.764-1.068 1.431-2.172 1.728-3.272M21 16.272c-.764 1.068-1.431 2.172-1.728 3.272" />
+                      </svg>
+                    </motion.div>
+                    <motion.div 
+                      className="mt-6 px-6 py-3 rounded-full bg-black/60 backdrop-blur-md border border-amber-400/20 shadow-lg text-center"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ 
+                        opacity: 1, 
+                        y: 0,
+                        transition: { delay: 0.2, duration: 0.5 }
+                      }}
+                    >
+                      <span className="text-amber-300 font-medium tracking-wide text-lg">Tap to Enable Sound</span>
+                    </motion.div>
+                  </div>
                 </div>
               </div>
             )}

@@ -17,6 +17,11 @@ import {
 } from "lucide-react";
 import gsap from "gsap";
 import CountUp from "./TextAnimations/CountUp/CountUp";
+import ShinyText from "./TextAnimations/ShinyText/ShinyText";
+import LiquidEther from "./Backgrounds/LiquidEther/LiquidEther";
+import sintuImg from "../assets/founders/sintu.jpeg";
+import aprajitaImg from "../assets/founders/aprajita.jpeg";
+import sangitaImg from "../assets/founders/sangita.jpeg";
 
 const AboutPage: React.FC = () => {
   useEffect(() => {
@@ -113,6 +118,7 @@ const AboutPage: React.FC = () => {
     {
       name: "Sintu Kumar",
       role: "Founder & CEO",
+      image: sintuImg,
       experience: "25+ Years",
       description:
         "Visionary leader with passion for creating memorable experiences",
@@ -120,12 +126,14 @@ const AboutPage: React.FC = () => {
     {
       name: "Aprajita Devi",
       role: "Event Designer",
+      image: aprajitaImg,
       experience: "20+ Years",
       description: "Creative expert in transforming venues into magical spaces",
     },
     {
       name: "Sangita Devi",
       role: "Catering Head",
+      image: sangitaImg,
       experience: "25+ Years",
       description: "Culinary master specializing in multi-cuisine preparations",
     },
@@ -164,18 +172,44 @@ const AboutPage: React.FC = () => {
       <div className="relative">
         {/* Header */}
         <motion.header
-          className="py-32 pb-24 bg-yellow-500/5 backdrop-blur-lg border-b border-yellow-500"
+          className="py-10 pb-24 bg-yellow-500/5 backdrop-blur-lg border-b border-yellow-500 relative overflow-hidden"
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-            <Link to="/" className="inline-flex items-center gap-2 text-yellow-200 no-underline font-normal mb-8 py-3 px-6 rounded-md border border-yellow-500 transition-all duration-300 hover:bg-yellow-500 hover:text-black hover:-translate-x-1 hover:shadow-lg hover:shadow-yellow-500/20">
+          {/* Fluid background effect behind heading */}
+          <div className="absolute inset-0 -z-10 opacity-60 pointer-events-none">
+            <LiquidEther
+              colors={["#ca8a04", "#eab308", "#fbbf24", "#fde047"]}
+              mouseForce={20}
+              cursorSize={100}
+              isViscous={false}
+              viscous={30}
+              iterationsViscous={32}
+              iterationsPoisson={32}
+              resolution={0.5}
+              isBounce={false}
+              autoDemo={true}
+              autoSpeed={0.5}
+              autoIntensity={2.2}
+              takeoverDuration={0.25}
+              autoResumeDelay={3000}
+              autoRampDuration={0.6}
+              className="w-full h-full"
+            />
+          </div>
+            <Link to="/" className="inline-flex items-center gap-2 text-yellow-200 no-underline font-normal ml-8 mb-12 py-3 px-6 rounded-md border border-yellow-500 transition-all duration-300 hover:bg-yellow-500 hover:text-black hover:-translate-x-1 hover:shadow-lg hover:shadow-yellow-500/20">
               <ArrowLeft size={20} />
               Back to Home
             </Link>
+          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
             <h1 className="text-5xl md:text-6xl font-light mb-4 text-yellow-500 text-center font-serif tracking-tight">
-              About Sintu Decorators
+              <ShinyText
+                text="About Sintu Decorators"
+                disabled={false}
+                speed={3}
+                className="inline-block"
+              />
             </h1>
             <p className="text-lg md:text-xl text-gray-300 text-center max-w-2xl mx-auto">
               Excellence in Event Management Since 1999
@@ -328,8 +362,16 @@ const AboutPage: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 1.6 + index * 0.1 }}
                 >
-                  <div className="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Users size={32} className="text-yellow-500" />
+                  <div className="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6 overflow-hidden">
+                    {member.image ? (
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Users size={32} className="text-yellow-500" />
+                    )}
                   </div>
                   <h3 className="text-2xl text-yellow-500 mb-2 font-light">{member.name}</h3>
                   <h4 className="text-gray-300 mb-2 font-medium">{member.role}</h4>
@@ -431,7 +473,7 @@ const AboutPage: React.FC = () => {
                 <h3 className="text-2xl text-yellow-500 mb-4 font-light">Awards & Recognition</h3>
                 <p className="text-gray-300 text-sm leading-relaxed">
                   Recognized as one of the top event management companies in
-                  Mumbai for three consecutive years.
+                  Munger for past fifteen years.
                 </p>
               </motion.div>
             </div>

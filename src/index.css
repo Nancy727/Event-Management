@@ -47,3 +47,9 @@ h1, h2, h3, h4, h5, h6 {
     filter: brightness(1.4);
   }
 }
+
+@keyframes progress {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(0%); }
+  100% { transform: translateX(100%); }
+}

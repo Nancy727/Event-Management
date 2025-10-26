@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Clock, 
-  Send, 
-  CheckCircle,
-  Instagram,
-  Facebook,
-  Twitter,
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  ArrowLeft,
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Send,
   Navigation,
   Users,
   Music,
-  Utensils
+  Utensils,
+  Instagram,
+  Facebook,
+  Twitter
 } from 'lucide-react';
 import gsap from 'gsap';
+import ShinyText from './TextAnimations/ShinyText/ShinyText';
+import Dock from './TextAnimations/Dock/Dock';
+import LiquidEther from './Backgrounds/LiquidEther/LiquidEther';
 
 const ContactPage: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,17 +32,25 @@ const ContactPage: React.FC = () => {
     guestCount: '',
     message: ''
   });
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'sending' | 'processing' | 'redirecting'>('idle');
+  const isDev = import.meta.env.MODE === 'development';
+
+  // Warmup API & pool right after mount to reduce first real POST latency
+  useEffect(() => {
+    fetch('/api/health', { method: 'GET' }).catch(() => {});
+  }, []);
 
   useEffect(() => {
-    // GSAP page entrance animation
+    // Entrance animation
     gsap.fromTo(
       '.contact-container',
       { opacity: 0, y: 50 },
       { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
     );
-    
-    // Luxury sparkle animation for title
+
+    // Title animation
     gsap.fromTo(
       '.contact-header h1',
       { opacity: 0, rotationX: -15, y: 30 },
@@ -52,30 +63,6 @@ const ContactPage: React.FC = () => {
         delay: 0.3,
       }
     );
-
-    // Scroll-triggered sideways swipe animation
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const contactItems = document.querySelectorAll('.contact-item');
-
-      contactItems.forEach((item, index) => {
-        const isEven = index % 2 === 0;
-        const offset = scrollY * 0.1;
-        const direction = isEven ? 1 : -1;
-        const swipeAmount = Math.sin(offset * 0.01 + index) * 20 * direction;
-
-        gsap.set(item, {
-          x: swipeAmount,
-          rotationY: swipeAmount * 0.2,
-        });
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -86,28 +73,92 @@ const ContactPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        eventType: '',
-        eventDate: '',
-        guestCount: '',
-        message: ''
-      });
-    }, 3000);
+    setIsSubmitting(true);
+    setSubmitStatus('sending');
+    setError(null);
+
+    const payload = {
+      fullName: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim() || null,
+      eventType: formData.eventType,
+      eventDate: formData.eventDate || null,
+      guestCount: formData.guestCount || null,
+      // message is optional now
+      message: formData.message.trim() || null
+    };
+
+    // message (event vision) is optional — don't require it for submission
+    if (!payload.fullName || !payload.email || !payload.eventType) {
+      setError('Please fill all required fields.');
+      setIsSubmitting(false);
+      setSubmitStatus('idle');
+      return;
+    }
+
+    const startedAt = performance.now();
+    let attempt = 0;
+    const maxAttempts = 2; // one retry on transient failure
+
+    const doRequest = async (): Promise<void> => {
+      attempt += 1;
+      // After 1.5s still pending -> processing status
+      const processingTimer = setTimeout(() => {
+        setSubmitStatus(prev => (prev === 'sending' ? 'processing' : prev));
+      }, 1500);
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        clearTimeout(processingTimer);
+        if (!res.ok) {
+          let serverMsg = 'Submission failed';
+          try {
+            const j = await res.json();
+            if (j?.error) serverMsg = j.error;
+          } catch { /* ignore */ }
+          throw new Error(serverMsg);
+        }
+        // Parse json (ignore parse failure gracefully)
+        let data: unknown = null;
+        try { data = await res.json(); } catch { /* ignore */ }
+        const ok = (data as { success?: boolean })?.success !== false;
+        if (!ok) throw new Error('Unexpected server response');
+
+        const totalMs = performance.now() - startedAt;
+        if (isDev) console.log(`[contact] success in ${totalMs.toFixed(1)}ms (attempt ${attempt})`);
+        setSubmitStatus('redirecting');
+        setTimeout(() => navigate('/contact/success'), 150);
+      } catch (err) {
+        clearTimeout(processingTimer);
+        const totalMs = performance.now() - startedAt;
+        const msg = err instanceof Error ? err.message : 'Unexpected error';
+        const transient = /fetch|network|timed|Failed to fetch|timeout/i.test(msg);
+        if (isDev) console.warn('[contact] attempt failed', { attempt, msg, totalMs: totalMs.toFixed(1) });
+        if (attempt < maxAttempts && transient) {
+          // brief delay before retry
+          await new Promise(r => setTimeout(r, 400));
+          return doRequest();
+        }
+        setError(msg);
+        setIsSubmitting(false);
+        setSubmitStatus('idle');
+      }
+    };
+
+    void doRequest();
   };
 
   const contactInfo = [
     {
       icon: Phone,
       title: 'Phone',
-      details: ['+91 98765 43210', '+91 87654 32109'],
+      details: ['8969207777'],
       action: 'Call Now'
     },
     {
@@ -119,7 +170,7 @@ const ContactPage: React.FC = () => {
     {
       icon: MapPin,
       title: 'Address',
-      details: ['123 Event Street, Bandra West', 'Mumbai, Maharashtra 400050', 'India'],
+      details: ['near shiv mandir mungroura, jamalpur 811214', 'dist munger, bihar'],
       action: 'Get Directions'
     },
     {
@@ -136,10 +187,23 @@ const ContactPage: React.FC = () => {
     { icon: Music, name: 'Music & Entertainment', description: 'Live music, DJ services, and entertainment' }
   ];
 
-  const socialLinks = [
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Twitter, href: '#', label: 'Twitter' }
+  // Social links inside Dock
+  const dockItems = [
+    {
+      icon: <Instagram size={22} className="text-yellow-500" />,
+      label: 'Instagram',
+      onClick: () => window.open('https://instagram.com', '_blank', 'noopener')
+    },
+    {
+      icon: <Facebook size={22} className="text-yellow-500" />,
+      label: 'Facebook',
+      onClick: () => window.open('https://facebook.com', '_blank', 'noopener')
+    },
+    {
+      icon: <Twitter size={22} className="text-yellow-500" />,
+      label: 'Twitter',
+      onClick: () => window.open('https://x.com', '_blank', 'noopener')
+    }
   ];
 
   return (
@@ -147,19 +211,44 @@ const ContactPage: React.FC = () => {
       <div className="opacity-0 contact-container">
         {/* Header */}
         <motion.header
-          className="py-32 bg-yellow-500/5 backdrop-blur-lg border-b border-yellow-500/20"
+          className="py-10 bg-yellow-500/5 backdrop-blur-lg border-b border-yellow-500/20 relative overflow-hidden"
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-            <Link to="/" className="inline-flex items-center gap-2 text-yellow-200 no-underline font-normal mb-8 py-3 px-6 rounded-md border border-yellow-500 transition-all duration-300 hover:bg-yellow-500 hover:text-black hover:-translate-x-1 hover:shadow-lg hover:shadow-yellow-500/20">
+          <div className="absolute inset-0 -z-10 opacity-60 pointer-events-none">
+            <LiquidEther
+              colors={[ '#ca8a04', '#eab308', '#fbbf24', '#fde047' ]}
+              mouseForce={20}
+              cursorSize={100}
+              isViscous={false}
+              viscous={30}
+              iterationsViscous={32}
+              iterationsPoisson={32}
+              resolution={0.5}
+              isBounce={false}
+              autoDemo={true}
+              autoSpeed={0.5}
+              autoIntensity={2.2}
+              takeoverDuration={0.25}
+              autoResumeDelay={3000}
+              autoRampDuration={0.6}
+              className="w-full h-full"
+            />
+          </div>
+            <Link to="/" className="inline-flex items-center gap-2 text-yellow-200 no-underline font-normal ml-8 mb-10 py-3 px-6 rounded-md border border-yellow-500 transition-all duration-300 hover:bg-yellow-500 hover:text-black hover:-translate-x-1 hover:shadow-lg hover:shadow-yellow-500/20">
               <ArrowLeft size={20} />
               Back to Home
             </Link>
+          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
             <div className="contact-header">
               <h1 className="text-5xl md:text-6xl font-light mb-4 text-yellow-500 text-center font-serif tracking-tight">
-                Contact Sintu Decorators
+                <ShinyText
+                  text="Contact Sintu Decorators"
+                  disabled={false}
+                  speed={3}
+                  className="inline-block"
+                />
               </h1>
             </div>
             <p className="text-lg md:text-xl text-gray-300 text-center max-w-2xl mx-auto font-light">
@@ -180,7 +269,7 @@ const ContactPage: React.FC = () => {
               {services.map((service, index) => (
                 <motion.div
                   key={service.name}
-                  className="group p-8 bg-zinc-900/80 backdrop-blur-xl border border-yellow-500/10 rounded-xl transition-all duration-300 hover:border-yellow-500/20 hover:bg-zinc-900/90 hover:-translate-y-2"
+                  className="group p-8 bg-zinc-900/80 backdrop-blur-xl border border-yellow-500/10 rounded-xl transition-all duration-300 hover:border-yellow-500/20 hover:bg-zinc-900/90"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
@@ -219,19 +308,10 @@ const ContactPage: React.FC = () => {
               >
                 <h3 className="text-2xl font-semibold text-white mb-6 text-left">Send Us a Message</h3>
                 
-                {isSubmitted ? (
-                  <motion.div
-                    className="text-center py-8"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <CheckCircle size={48} className="text-green-500 mx-auto mb-4" />
-                    <h4 className="text-xl font-semibold text-white mb-2">Message Sent Successfully!</h4>
-                    <p className="text-gray-300">We'll get back to you within 24 hours.</p>
-                  </motion.div>
-                ) : (
                   <form className="space-y-6 text-left" onSubmit={handleSubmit}>
+                    {error && (
+                      <div className="p-3 rounded bg-red-500/10 border border-red-500/30 text-red-300 text-sm">{error}</div>
+                    )}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <label htmlFor="name" className="block text-white font-medium text-sm">Full Name *</label>
@@ -322,30 +402,42 @@ const ContactPage: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <label htmlFor="message" className="block text-white font-medium text-sm">Message *</label>
+                      <label htmlFor="message" className="block text-white font-medium text-sm">Message (Optional)</label>
                       <textarea
                         id="message"
                         name="message"
                         rows={5}
                         value={formData.message}
                         onChange={handleInputChange}
-                        placeholder="Tell us about your event vision..."
+                        placeholder="Tell us about your event vision (optional)..."
                         className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:bg-white/15 transition-all resize-none"
-                        required
                       ></textarea>
                     </div>
 
-                    <motion.button
-                      type="submit"
-                      className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-yellow-500 text-black rounded-lg font-medium tracking-wide transition-all hover:bg-yellow-600"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      Send Message
-                      <Send size={20} />
-                    </motion.button>
+                    <div className="space-y-3">
+                      <motion.button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-yellow-500 text-black rounded-lg font-medium tracking-wide transition-all hover:bg-yellow-600 disabled:opacity-60 disabled:cursor-not-allowed"
+                        whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+                        whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+                      >
+                        {submitStatus === 'sending' && 'Sending...'}
+                        {submitStatus === 'processing' && 'Processing...'}
+                        {submitStatus === 'redirecting' && 'Success!'}
+                        {submitStatus === 'idle' && 'Send Message'}
+                        <Send size={20} />
+                      </motion.button>
+                      {isSubmitting && (
+                        <div className="h-1 w-full bg-white/10 rounded overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-yellow-500 via-yellow-300 to-yellow-500 animate-[progress_1.8s_linear_infinite]" />
+                        </div>
+                      )}
+                      {submitStatus === 'processing' && (
+                        <p className="text-xs text-yellow-400/80 tracking-wide">Still working... finalizing your submission.</p>
+                      )}
+                    </div>
                   </form>
-                )}
               </motion.div>
 
               {/* Contact Info */}
@@ -355,7 +447,7 @@ const ContactPage: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 1.2 }}
               >
-                <div className="contact-item text-center p-8 bg-black/80 rounded-2xl border border-yellow-500/20 backdrop-blur-lg transition-all duration-300 hover:bg-black/90 hover:border-yellow-500 hover:shadow-xl hover:shadow-yellow-500/20">
+                <div className="text-center p-8 bg-black/80 rounded-2xl border border-yellow-500/20 backdrop-blur-lg transition-all duration-300 hover:bg-black/90 hover:border-yellow-500 hover:shadow-xl hover:shadow-yellow-500/20 max-w-md w-full mx-auto lg:mx-0">
                   <h3 className="text-2xl font-semibold text-white mb-4">Contact Information</h3>
                   <p className="text-gray-300 mb-6">Ready to plan your dream event? Contact us today!</p>
 
@@ -363,7 +455,7 @@ const ContactPage: React.FC = () => {
                     {contactInfo.map((method, index) => (
                       <motion.div
                         key={method.title}
-                        className="group p-8 bg-zinc-900/80 backdrop-blur-xl border border-yellow-500/10 rounded-xl transition-all duration-300 hover:border-yellow-500/20 hover:bg-zinc-900/90 hover:-translate-y-1"
+                        className="p-8 bg-zinc-900/80 backdrop-blur-xl border border-yellow-500/10 rounded-xl transition-all duration-300 hover:border-yellow-500/20 hover:bg-zinc-900/90"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 1.4 + index * 0.1 }}
@@ -382,24 +474,18 @@ const ContactPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="contact-item text-center p-8 bg-black/80 rounded-2xl border border-yellow-500/20 backdrop-blur-lg transition-all duration-300 hover:bg-black/90 hover:border-yellow-500 hover:shadow-xl hover:shadow-yellow-500/20">
-                  <h4 className="text-white font-semibold mb-4">Follow Us</h4>
-                  <div className="flex justify-center gap-4">
-                    {socialLinks.map((social, index) => (
-                      <motion.a
-                        key={social.label}
-                        href={social.href}
-                        className="w-12 h-12 bg-yellow-500/10 rounded-lg flex items-center justify-center text-yellow-500 transition-all hover:bg-yellow-500 hover:text-black"
-                        whileHover={{ scale: 1.1, y: -2 }}
-                        whileTap={{ scale: 0.95 }}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.4, delay: 1.6 + index * 0.1 }}
-                      >
-                        <social.icon size={20} />
-                      </motion.a>
-                    ))}
+                <div className="text-center p-8 bg-black/80 rounded-2xl border border-yellow-500/20 backdrop-blur-lg transition-all duration-300 hover:bg-black/90 hover:border-yellow-500 hover:shadow-xl hover:shadow-yellow-500/20 relative max-w-md w-full mx-auto lg:mx-0">
+                  <h4 className="text-white font-semibold mb-6">Follow Us</h4>
+                  <div className="relative h-20 flex items-center justify-center">
+                    <Dock
+                      items={dockItems}
+                      panelHeight={68}
+                      baseItemSize={50}
+                      magnification={70}
+                      className="bg-black/60 backdrop-blur-xl border-yellow-500/30 shadow-lg shadow-yellow-500/10"
+                    />
                   </div>
+                  <p className="mt-6 text-xs tracking-wide text-yellow-500/70 uppercase">Connect & stay inspired</p>
                 </div>
               </motion.div>
             </div>
@@ -421,13 +507,14 @@ const ContactPage: React.FC = () => {
               Visit our office or get directions to our location
             </p>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="contact-item text-center p-12 bg-black/80 rounded-2xl border border-yellow-500/20 backdrop-blur-lg transition-all duration-300 hover:bg-black/90 hover:border-yellow-500 hover:shadow-xl hover:shadow-yellow-500/20">
+              <div className="text-center p-12 bg-black/80 rounded-2xl border border-yellow-500/20 backdrop-blur-lg transition-all duration-300 hover:bg-black/90 hover:border-yellow-500 hover:shadow-xl hover:shadow-yellow-500/20">
                 <Navigation size={48} className="text-white mb-6 mx-auto" />
                 <h4 className="text-2xl font-semibold text-white mb-4">Sintu Decorators</h4>
                 <p className="text-gray-300 leading-relaxed mb-6">
-                  123 Event Street, Bandra West<br />Mumbai, Maharashtra 400050
+                  near shiv mandir mungroura, jamalpur 811214<br />dist munger, bihar
                 </p>
-                <motion.button 
+                <motion.button
+                  onClick={() => window.open('https://www.google.com/maps?q=near+shiv+mandir+mungroura+jamalpur+811214+dist+munger+bihar', '_blank', 'noopener')}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-yellow-500 text-black rounded-lg font-medium tracking-wide transition-all hover:bg-yellow-600"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -439,7 +526,7 @@ const ContactPage: React.FC = () => {
               {/* In a real application, you would integrate with Google Maps API */}
               <div className="lg:col-span-2 contact-item bg-black/80 rounded-2xl border border-yellow-500/20 backdrop-blur-lg overflow-hidden transition-all duration-300 hover:bg-black/90 hover:border-yellow-500 hover:shadow-xl hover:shadow-yellow-500/20">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.0234374234!2d72.8260621!3d19.0544472!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDAzJzE2LjAiTiA3Mso0OSczMy44IkU!5e0!3m2!1sen!2sin!4v1234567890"
+                  src="https://www.google.com/maps?q=near+shiv+mandir+mungroura+jamalpur+811214+dist+munger+bihar&output=embed"
                   width="100%"
                   height="400"
                   style={{ border: 0 }}

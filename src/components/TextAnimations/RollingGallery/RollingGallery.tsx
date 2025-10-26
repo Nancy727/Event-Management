@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { motion, useMotionValue, useAnimation, useTransform } from "framer-motion";
-import type { PanInfo } from "framer-motion";
-
+import { motion, useMotionValue, useAnimation, useTransform } from 'motion/react';
+import type { PanInfo, ResolvedValues } from 'motion/react';
 
 const IMGS: string[] = [
   'https://images.unsplash.com/photo-1528181304800-259b08848526?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -20,9 +19,22 @@ interface RollingGalleryProps {
   autoplay?: boolean;
   pauseOnHover?: boolean;
   images?: string[];
+  /** Multiplies the base radius to make the cylinder more "open" ( >1 = flatter ) */
+  radiusMultiplier?: number;
+  /** Scales individual face width (larger value = wider images) */
+  faceScale?: number;
+  /** Container height in px */
+  height?: number;
 }
 
-const RollingGallery: React.FC<RollingGalleryProps> = ({ autoplay = false, pauseOnHover = false, images = [] }) => {
+const RollingGallery: React.FC<RollingGalleryProps> = ({
+  autoplay = false,
+  pauseOnHover = false,
+  images = [],
+  radiusMultiplier = 1.4,
+  faceScale = 2.2,
+  height = 600
+}) => {
   const galleryImages = images.length > 0 ? images : IMGS;
 
   const [isScreenSizeSm, setIsScreenSizeSm] = useState<boolean>(window.innerWidth <= 640);
@@ -32,10 +44,10 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({ autoplay = false, pause
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const cylinderWidth: number = isScreenSizeSm ? 1100 : 1800;
+  const cylinderWidth: number = isScreenSizeSm ? 1400 : 2400;
   const faceCount: number = galleryImages.length;
-  const faceWidth: number = (cylinderWidth / faceCount) * 1.5;
-  const radius: number = cylinderWidth / (2 * Math.PI);
+  const faceWidth: number = (cylinderWidth / faceCount) * faceScale;
+  const radius: number = (cylinderWidth / (2 * Math.PI)) * radiusMultiplier;
 
   const dragFactor: number = 0.05;
   const rotation = useMotionValue(0);
@@ -64,13 +76,11 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({ autoplay = false, pause
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoplay]);
 
- const handleUpdate = (latest: { rotateY?: number }) => {
-  if (typeof latest.rotateY === "number") {
-    rotation.set(latest.rotateY);
-  }
-};
-
-
+  const handleUpdate = (latest: ResolvedValues) => {
+    if (typeof latest.rotateY === 'number') {
+      rotation.set(latest.rotateY);
+    }
+  };
 
   const handleDrag = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void => {
     controls.stop();
@@ -99,7 +109,7 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({ autoplay = false, pause
   };
 
   return (
-    <div className="relative h-[500px] w-full overflow-hidden">
+    <div className="relative w-full overflow-hidden" style={{ height }}>
       <div
         className="absolute top-0 left-0 h-full w-[48px] z-10"
         style={{
@@ -142,7 +152,7 @@ const RollingGallery: React.FC<RollingGalleryProps> = ({ autoplay = false, pause
               <img
                 src={url}
                 alt="gallery"
-                className="pointer-events-none h-[120px] w-[300px] rounded-[15px] border-[3px] border-white object-cover transition-transform duration-300 ease-out group-hover:scale-105 sm:h-[100px] sm:w-[220px]"
+                className="pointer-events-none w-full h-[180px] md:h-[230px] rounded-[20px] border-[3px] border-white object-cover transition-transform duration-300 ease-out group-hover:scale-105"
               />
             </div>
           ))}

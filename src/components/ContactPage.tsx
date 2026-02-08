@@ -37,11 +37,6 @@ const ContactPage: React.FC = () => {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'sending' | 'processing' | 'redirecting'>('idle');
   const isDev = import.meta.env.MODE === 'development';
 
-  // Warmup API & pool right after mount to reduce first real POST latency
-  useEffect(() => {
-    fetch('/api/health', { method: 'GET' }).catch(() => {});
-  }, []);
-
   useEffect(() => {
     // Entrance animation
     gsap.fromTo(

@@ -46,14 +46,14 @@ const Gallery: React.FC = () => {
             Back to Home
           </Link>
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-            <div role="heading" aria-level={1} className="text-center">
+            <h1 className="text-center">
               <ShinyText
                 text="Our Gallery"
                 disabled={false}
                 speed={3}
                 className="text-5xl md:text-6xl font-light mb-4 text-yellow-500 font-serif tracking-tight inline-block"
               />
-            </div>
+            </h1>
             <p className="text-lg md:text-xl text-gray-300 text-center max-w-2xl mx-auto font-light">
               Showcase of our finest event management, catering, and music
               services
@@ -64,10 +64,10 @@ const Gallery: React.FC = () => {
         <section className="py-24">
           <div className="max-w-7xl mx-auto px-4">
             <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-8">
-              Wedding Events
+              Special Occasions
             </h2>
             <p className="text-lg text-gray-300 text-center mb-16 max-w-2xl mx-auto">
-              Celebrating love stories with elegance and style
+              Creating unforgettable moments for every special event
             </p>
             <div style={{ height: "600px", position: "relative" }}>
               <CircularGallery
@@ -79,52 +79,15 @@ const Gallery: React.FC = () => {
             </div>
           </div>
         </section>
-        {/* Corporate Events Gallery */}
-        <section className="py-24 bg-black/30">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-8">
-              Corporate Events
-            </h2>
-            <p className="text-lg text-gray-300 text-center mb-16 max-w-2xl mx-auto">
-              Professional excellence in business gatherings
-            </p>
-            <div className="w-full h-[600px] flex items-center justify-center">
-              <CircularGallery
-                bend={2.5}
-                textColor="#ffffff"
-                borderRadius={0.08}
-                scrollEase={0.025}
-              />
-            </div>
-          </div>
-        </section>
-        {/* Birthday Celebrations Gallery */}
-        <section className="py-24">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-8">
-              Birthday Celebrations
-            </h2>
-            <p className="text-lg text-gray-300 text-center mb-16 max-w-2xl mx-auto">
-              Making every birthday a magical experience
-            </p>
-            <div className="w-full h-[600px] flex items-center justify-center">
-              <CircularGallery
-                bend={3.2}
-                textColor="#ffffff"
-                borderRadius={0.06}
-                scrollEase={0.022}
-              />
-            </div>
-          </div>
-        </section>
+        
         {/* Special Occasions Gallery */}
         <section className="py-24 bg-black/30">
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
             <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-8">
-              Special Occasions
+              Wedding Events
             </h2>
             <p className="text-lg text-gray-300 text-center mb-12 max-w-2xl mx-auto">
-              Creating unforgettable moments for every special event
+              Celebrating love stories with elegance and style
             </p>
           </div>
           {/* Full-bleed Rolling Gallery */}

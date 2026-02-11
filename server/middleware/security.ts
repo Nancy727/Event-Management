@@ -1,6 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 import { rateLimit } from "express-rate-limit";
 
+declare module "express-serve-static-core" {
+  interface Request {
+    rateLimit?: {
+      limit: number;
+      current: number;
+      remaining: number;
+      resetTime?: Date;
+    };
+  }
+}
+
 // General API rate limiter
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

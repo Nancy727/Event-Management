@@ -159,7 +159,7 @@ const ContactPage: React.FC = () => {
     {
       icon: Mail,
       title: 'Email',
-      details: ['info@sintudecorators.com', 'events@sintudecorators.com'],
+      details: ['sintudecorators@gmail.com'], 
       action: 'Send Email'
     },
     {
@@ -194,11 +194,6 @@ const ContactPage: React.FC = () => {
       label: 'Facebook',
       onClick: () => window.open('https://facebook.com', '_blank', 'noopener')
     },
-    {
-      icon: <Twitter size={22} className="text-yellow-500" />,
-      label: 'Twitter',
-      onClick: () => window.open('https://x.com', '_blank', 'noopener')
-    }
   ];
 
   return (

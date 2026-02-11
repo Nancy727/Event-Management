@@ -1,5 +1,7 @@
 import { performance } from "node:perf_hooks";
 import nodemailer from "nodemailer";
+// @ts-expect-error - Brevo SDK doesn't have TypeScript definitions
+import SibApiV3Sdk from 'sib-api-v3-sdk';
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import { Pool } from "pg";
@@ -76,11 +78,16 @@ const pool = new Pool({
   connectionTimeoutMillis: 8000,
 });
 
-// Nodemailer transporter setup for Brevo
+// Brevo (Sendinblue) API client setup
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
+const apiKey = defaultClient.authentications['api-key'];
+apiKey.apiKey = process.env.BREVO_API_KEY || '';
+
+// Nodemailer transporter with Brevo SMTP
 const transporter = nodemailer.createTransport({
   host: process.env.BREVO_SMTP_HOST || 'smtp-relay.brevo.com',
   port: parseInt(process.env.BREVO_SMTP_PORT || '587'),
-  secure: false, // true for 465, false for other ports
+  secure: false,
   auth: {
     user: process.env.BREVO_SMTP_USER,
     pass: process.env.BREVO_SMTP_KEY,
@@ -325,13 +332,6 @@ interface DatabaseInsertResult {
   }>;
 }
 
-interface MailOptions {
-  from: string;
-  to: string;
-  subject: string;
-  html: string;
-}
-
 app.post("/api/contact", contactSecurityMiddleware, async (req: Request<object, object, ContactSubmission>, res: Response) => {
   const { fullName, email, phone, eventType, eventDate, guestCount, message } =
     req.body;
@@ -368,7 +368,7 @@ app.post("/api/contact", contactSecurityMiddleware, async (req: Request<object, 
         }`
       );
 
-    // Send email to customer
+    // Send email to customer using Brevo SMTP
     try {
       const emailHtml: string = createEmailTemplate({
         fullName,
@@ -380,7 +380,7 @@ app.post("/api/contact", contactSecurityMiddleware, async (req: Request<object, 
         message: message || undefined,
       });
 
-      const mailOptions: MailOptions = {
+      const mailOptions = {
         from: `${process.env.EMAIL_FROM_NAME || 'Sintu Decorators'} <${process.env.EMAIL_FROM || 'nancykumari742004@gmail.com'}>`,
         to: email,
         subject: `✨ Thank You for Contacting Sintu Decorators - ${eventType.charAt(0).toUpperCase() + eventType.slice(1)} Event`,
@@ -390,7 +390,7 @@ app.post("/api/contact", contactSecurityMiddleware, async (req: Request<object, 
       await transporter.sendMail(mailOptions);
       
       if (isDev) {
-        console.log(`[Email] Confirmation sent to ${email}`);
+        console.log(`[Email] Confirmation sent to ${email} via Brevo SMTP`);
       }
     } catch (emailError) {
       console.error('[Email] Failed to send:', (emailError as Error).message);

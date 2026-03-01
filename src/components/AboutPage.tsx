@@ -9,11 +9,9 @@ import {
   Star,
   Music,
   Utensils,
-  Heart,
   Target,
   Eye,
   CheckCircle,
-  Play,
 } from "lucide-react";
 import gsap from "gsap";
 import CountUp from "./TextAnimations/CountUp/CountUp";
@@ -24,6 +22,13 @@ import aprajitaImg from "../assets/founders/aprajita.jpeg";
 import sangitaImg from "../assets/founders/sangita.jpeg";
 
 const AboutPage: React.FC = () => {
+  // Achievement images
+  const achievementImages = [
+    "/images/achievements/image1.jpeg",
+    "/images/achievements/image3.jpeg",
+    "/images/achievements/image2.jpeg",
+  ];
+
   useEffect(() => {
     // GSAP page entrance animation
     gsap.fromTo(
@@ -425,7 +430,7 @@ const AboutPage: React.FC = () => {
           </div>
         </motion.section>
 
-        {/* Video/Media Section */}
+        {/* Company Achievements Section */}
         <motion.section
           className="py-24 bg-white/5"
           initial={{ opacity: 0 }}
@@ -433,49 +438,28 @@ const AboutPage: React.FC = () => {
           transition={{ duration: 0.8, delay: 2.2 }}
         >
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-            <h2 className="text-4xl md:text-5xl font-light mb-16 text-yellow-500 text-center font-serif tracking-tight">
-              Experience Our Work
+            <h2 className="text-4xl md:text-5xl font-light mb-4 text-yellow-500 text-center font-serif tracking-tight">
+              Company Achievements
             </h2>
+            <p className="text-lg text-gray-300 text-center max-w-2xl mx-auto mb-16">
+              Celebrating our journey of excellence through memorable milestones
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <motion.div
-                className="p-8 bg-zinc-900/50 backdrop-blur-lg border-2 border-dashed border-yellow-500/20 rounded-xl text-center transition-all duration-300 hover:border-yellow-500/30 hover:bg-zinc-900/60 hover:-translate-y-2 cursor-pointer group"
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-yellow-500/20 transition-colors">
-                  <Play size={40} className="text-yellow-500" />
-                </div>
-                <h3 className="text-2xl text-yellow-500 mb-4 font-light">Company Introduction</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  Watch our story unfold through 15 years of excellence
-                </p>
-              </motion.div>
-              <motion.div
-                className="p-8 bg-zinc-900/80 backdrop-blur-xl border border-yellow-500/10 rounded-xl text-center transition-all duration-300 hover:border-yellow-500/20 hover:bg-zinc-900/90 hover:-translate-y-2"
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Heart size={32} className="text-yellow-500" />
-                </div>
-                <h3 className="text-2xl text-yellow-500 mb-4 font-light">Client Testimonials</h3>
-                <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                  "Sintu Decorators made our wedding absolutely perfect. Every
-                  detail was handled with care and precision."
-                </p>
-                <span className="text-gray-400 text-sm italic">- Priya & Rahul, Wedding Clients</span>
-              </motion.div>
-              <motion.div
-                className="p-8 bg-zinc-900/80 backdrop-blur-xl border border-yellow-500/10 rounded-xl text-center transition-all duration-300 hover:border-yellow-500/20 hover:bg-zinc-900/90 hover:-translate-y-2"
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Award size={32} className="text-yellow-500" />
-                </div>
-                <h3 className="text-2xl text-yellow-500 mb-4 font-light">Awards & Recognition</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  Recognized as one of the top event management companies in
-                  Munger for past fifteen years.
-                </p>
-              </motion.div>
+              {achievementImages.map((image, index) => (
+                <motion.div
+                  key={index}
+                  className="relative aspect-square overflow-hidden rounded-xl border border-yellow-500/20 bg-zinc-900/50 backdrop-blur-xl transition-all duration-300 hover:border-yellow-500/40 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/20"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 2.4 + index * 0.1 }}
+                >
+                  <img
+                    src={image}
+                    alt={`Achievement ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </motion.div>
+              ))}
             </div>
           </div>
         </motion.section>

@@ -134,19 +134,19 @@ const Hero: React.FC = () => {
 
         {/* Navigation Links */}
         <motion.div 
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+          className="fixed bottom-4 sm:bottom-8 left-[20%] sm:left-1/2 -translate-x-1/2 z-50 w-[95%] sm:w-auto"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.2 }}
         >
-          <div className="flex gap-8 items-center justify-center">
-            <Link to="/about" className="text-yellow-200 font-light text-lg tracking-widest uppercase font-serif hover:text-yellow-500 transition-all">
+          <div className="flex gap-3 sm:gap-6 md:gap-8 items-center justify-center flex-wrap px-4">
+            <Link to="/about" className="text-yellow-200 font-light text-sm sm:text-base md:text-lg tracking-widest uppercase font-serif hover:text-yellow-500 transition-all whitespace-nowrap">
               About
             </Link>
-            <Link to="/gallery" className="text-yellow-200 font-light text-lg tracking-widest uppercase font-serif hover:text-yellow-500 transition-all">
+            <Link to="/gallery" className="text-yellow-200 font-light text-sm sm:text-base md:text-lg tracking-widest uppercase font-serif hover:text-yellow-500 transition-all whitespace-nowrap">
               Gallery
             </Link>
-            <Link to="/contact" className="text-yellow-200 font-light text-lg tracking-widest uppercase font-serif hover:text-yellow-500 transition-all">
+            <Link to="/contact" className="text-yellow-200 font-light text-sm sm:text-base md:text-lg tracking-widest uppercase font-serif hover:text-yellow-500 transition-all whitespace-nowrap">
               Contact
             </Link>
           </div>

@@ -1,13 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Users, Music, Utensils } from "lucide-react";
-import CircularGallery from "./TextAnimations/CircularGallery/CircularGallery";
-import RollingGallery from "./TextAnimations/RollingGallery/RollingGallery";
 import ShinyText from "./TextAnimations/ShinyText/ShinyText";
 import LiquidEther from "./Backgrounds/LiquidEther/LiquidEther";
 
 const Gallery: React.FC = () => {
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
+  const [expandedVideo, setExpandedVideo] = useState<string | null>(null);
+  // Circular Gallery images (Special Occasions)
+  const circularImages = [
+    "/images/circulargallery/image14.jpg",
+    "/images/circulargallery/image15.jpg",
+    "/images/circulargallery/image16.jpg",
+    "/images/circulargallery/image8.jpg",
+    "/images/circulargallery/image12.jpg",
+    "/images/circulargallery/image2.jpg",
+    "/images/circulargallery/image4.jpg",
+    "/images/circulargallery/image5.jpg",
+    "/images/circulargallery/image13.jpg",
+    "/images/circulargallery/image6.jpg",
+    "/images/circulargallery/image9.jpg",
+    "/images/circulargallery/image1.jpg",
+    "/images/circulargallery/image7.jpg",
+    "/images/circulargallery/image10.jpg",
+    "/images/circulargallery/image11.jpg",
+    "/images/circulargallery/image17.jpg",
+  ];
+
+  // Rolling Gallery media (Wedding Events)
+  const rollingImages = [
+    "/images/rollinggallery/image1.jpg",
+    "/images/rollinggallery/image2.jpg",
+    "/images/rollinggallery/image3.jpg",
+    "/images/rollinggallery/image4.jpg",
+    "/images/rollinggallery/image5.jpg",
+    "/images/rollinggallery/image6.jpg",
+  ];
+
+  const rollingVideos = [
+    "/images/rollinggallery/video1.mp4",
+    "/images/rollinggallery/video2.mp4",
+    "/images/rollinggallery/video3.mp4",
+    "/images/rollinggallery/video4.mp4",
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-black to-yellow-900/10">
       <div className="relative">
@@ -69,13 +106,32 @@ const Gallery: React.FC = () => {
             <p className="text-lg text-gray-300 text-center mb-16 max-w-2xl mx-auto">
               Creating unforgettable moments for every special event
             </p>
-            <div style={{ height: "600px", position: "relative" }}>
-              <CircularGallery
-                bend={3}
-                textColor="#ffffff"
-                borderRadius={0.05}
-                scrollEase={0.02}
-              />
+
+            {/* Grid Layout - 2 columns for photos */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 relative">
+              {circularImages.map((img, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  onClick={() => setExpandedImage(expandedImage === img ? null : img)}
+                  className={`relative overflow-hidden rounded-lg cursor-pointer transition-all duration-[2s] ease-in-out ${
+                    expandedImage === img 
+                      ? 'fixed inset-0 z-50 m-0 bg-black/95 flex items-center justify-center p-4' 
+                      : 'aspect-square'
+                  }`}
+                >
+                  <img
+                    src={img}
+                    alt={`Special occasion ${index + 1}`}
+                    className={`w-full h-full transition-all duration-[2s] ease-in-out ${
+                      expandedImage === img ? 'object-contain' : 'object-cover'
+                    }`}
+                  />
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
@@ -89,12 +145,62 @@ const Gallery: React.FC = () => {
             <p className="text-lg text-gray-300 text-center mb-12 max-w-2xl mx-auto">
               Celebrating love stories with elegance and style
             </p>
-          </div>
-          {/* Full-bleed Rolling Gallery */}
-          <div className="w-full overflow-hidden">
-            {/* Use negative margins to counter parent padding for true edge-to-edge */}
-            <div className="-mx-4 md:-mx-8 lg:-mx-12">
-              <RollingGallery autoplay={true} pauseOnHover={true} />
+            
+            {/* Photos Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+              {rollingImages.map((img, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  onClick={() => setExpandedImage(expandedImage === img ? null : img)}
+                  className={`relative overflow-hidden rounded-lg cursor-pointer transition-all duration-[2s] ease-in-out ${
+                    expandedImage === img 
+                      ? 'fixed inset-0 z-50 m-0 bg-black/95 flex items-center justify-center p-4' 
+                      : 'aspect-square'
+                  }`}
+                >
+                  <img
+                    src={img}
+                    alt={`Wedding event ${index + 1}`}
+                    className={`w-full h-full transition-all duration-[2s] ease-in-out ${
+                      expandedImage === img ? 'object-contain' : 'object-cover'
+                    }`}
+                  />
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Videos Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {rollingVideos.map((video, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  onClick={() => setExpandedVideo(expandedVideo === video ? null : video)}
+                  className={`relative overflow-hidden rounded-lg cursor-pointer transition-all duration-[2s] ease-in-out ${
+                    expandedVideo === video 
+                      ? 'fixed inset-0 z-50 m-0 bg-black/95 flex items-center justify-center p-4' 
+                      : 'aspect-video'
+                  }`}
+                >
+                  <video
+                    src={video}
+                    muted
+                    autoPlay
+                    loop
+                    playsInline
+                    className={`w-full h-full transition-all duration-[2s] ease-in-out ${
+                      expandedVideo === video ? 'object-contain' : 'object-cover'
+                    }`}
+                  />
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>

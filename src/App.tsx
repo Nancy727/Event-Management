@@ -8,6 +8,7 @@ import ContactSuccess from "./components/ContactSuccess";
 import ContactPage from "./components/ContactPage";
 import { AnimatePresence } from "framer-motion";
 import AboutPage from "./components/AboutPage";
+import AchievementsPage from "./components/AchievementsPage";
 import Gallery from "./components/Gallery";
 import Hero from "./components/Hero";
 import AdminPage from "./components/AdminPage";
@@ -94,6 +95,16 @@ function App() {
               element={
                 <PageTransition>
                   <AboutPage />
+                </PageTransition>
+              }
+            />
+
+            {/* Achievements Page */}
+            <Route
+              path="/achievements"
+              element={
+                <PageTransition>
+                  <AchievementsPage />
                 </PageTransition>
               }
             />

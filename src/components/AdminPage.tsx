@@ -97,7 +97,8 @@ const AdminPage: React.FC = () => {
         setError(data.error || "Invalid credentials");
       }
     } catch (err) {
-      console.log("Login failed. Please try again: ", err);
+      console.error("Login error:", err);
+      setError("Cannot connect to server. Please check if the backend is running and database is configured.");
     } finally {
       setIsLoading(false);
     }
@@ -116,10 +117,20 @@ const AdminPage: React.FC = () => {
       if (response.ok && data.success) {
         setSubmissions(data.submissions);
       } else {
-        console.log("Failed to fetch submissions");
+        console.error("Failed to fetch submissions:", data);
+        setToast({
+          message: data.error || "Failed to load submissions. Please check database configuration.",
+          type: "error",
+          isVisible: true,
+        });
       }
     } catch (err) {
-      console.log("Error loading submissions: ", err);
+      console.error("Error loading submissions:", err);
+      setToast({
+        message: "Cannot connect to server. Please ensure the backend is running and database is configured.",
+        type: "error",
+        isVisible: true,
+      });
     }
   };
 

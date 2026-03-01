@@ -14,7 +14,6 @@ import {
   Utensils,
   Instagram,
   Facebook,
-  Twitter
 } from 'lucide-react';
 import gsap from 'gsap';
 import ShinyText from './TextAnimations/ShinyText/ShinyText';

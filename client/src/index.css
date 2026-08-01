@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Brandon Grotesque", "Jost", "Montserrat", sans-serif;
+  }
+  body {
+    @apply transition-colors duration-300 bg-white text-olive-700 dark:bg-white dark:text-olive-700;
+    font-family: "Brandon Grotesque", "Jost", "Montserrat", sans-serif;
+  }
+}
+
+/* Custom Editorial Luxury Scrollbar in Dark Olive & Dark Rose */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F7F8F5;
+}
+::-webkit-scrollbar-thumb {
+  background: #28351F;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3D1B22;
+}
+
+/* Editorial Glassmorphism */
+.glass-panel-white {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(40, 53, 31, 0.15);
+}
+
+.glass-card-rose {
+  background: rgba(244, 227, 229, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(61, 27, 34, 0.2);
+}
+
+/* Rose & Olive Gradient Text */
+.rose-gradient-text {
+  background: linear-gradient(135deg, #3D1B22 0%, #6E3841 50%, #28351F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.olive-gradient-text {
+  background: linear-gradient(135deg, #28351F 0%, #4C613D 50%, #3D1B22 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Mindy Weiss Style Brand Lettering SVG & Custom Styling */
+.mindy-style-logo {
+  font-family: "Bodoni Moda", "Cormorant Garamond", serif;
+  font-style: italic;
+  letter-spacing: -0.02em;
+}
+
+.mindy-sub-title {
+  font-family: "Brandon Grotesque", "Jost", sans-serif;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}

@@ -68,7 +68,7 @@ export const AIConsultantPreview: React.FC = () => {
             </div>
 
             <div className="p-4 rounded-2xl bg-olive-50 border border-olive-200 text-olive-700 leading-relaxed shadow-sm">
-              ✨ **Calculated Range:** ₹7,00,000 - ₹8,50,000 including Royal Mandap, German waterproof pandal, 3D stage, and 15+ dish buffet catering counter.
+              ✨ Calculated Range: ₹7,00,000 - ₹8,50,000 including Royal Mandap, German waterproof pandal, 3D stage, and 15+ dish buffet catering counter.
             </div>
 
             <div className="pt-2">

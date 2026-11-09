@@ -26,6 +26,8 @@ export const InquiryModal: React.FC = () => {
     e.preventDefault();
     setLoading(true);
 
+    const fullMessage = `Name: ${formData.name}\nPhone: ${formData.phone}\nEvent: ${formData.eventType}\nDate: ${formData.eventDate || 'Not specified'}\nGuests: ${formData.guestCount}\nLocation: ${formData.location}\nDetails: ${formData.message || 'N/A'}`;
+
     try {
       await apiService.sendContactMessage({
         name: formData.name,
@@ -41,10 +43,24 @@ export const InquiryModal: React.FC = () => {
       setLoading(false);
       setSubmitted(true);
       confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+
+      // Automatically launch WhatsApp with user inquiry details
+      const waUrl = `https://wa.me/918969207777?text=${encodeURIComponent(`New Event Inquiry for Sintu Decorators:\n\n${fullMessage}`)}`;
+      window.open(waUrl, '_blank');
     } catch {
       setLoading(false);
       setSubmitted(true);
     }
+  };
+
+  const getWhatsAppUrl = () => {
+    const text = `Name: ${formData.name}\nPhone: ${formData.phone}\nEvent: ${formData.eventType}\nDate: ${formData.eventDate}\nDetails: ${formData.message}`;
+    return `https://wa.me/918969207777?text=${encodeURIComponent(`Event Inquiry:\n${text}`)}`;
+  };
+
+  const getEmailUrl = () => {
+    const text = `Name: ${formData.name}\nPhone: ${formData.phone}\nEvent: ${formData.eventType}\nDate: ${formData.eventDate}\nDetails: ${formData.message}`;
+    return `mailto:sintudecorators@gmail.com?subject=Event Inquiry from ${formData.name}&body=${encodeURIComponent(text)}`;
   };
 
   return (
@@ -60,14 +76,31 @@ export const InquiryModal: React.FC = () => {
         </button>
 
         {submitted ? (
-          <div className="text-center py-8 space-y-4">
+          <div className="text-center py-6 space-y-4">
             <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto border border-emerald-300">
               <CheckCircle2 className="w-10 h-10 text-emerald-700" />
             </div>
-            <h3 className="font-serif text-2xl font-normal text-olive-700">Inquiry Received</h3>
+            <h3 className="font-serif text-2xl font-normal text-olive-700">Inquiry Sent Successfully!</h3>
             <p className="text-xs text-olive-600 font-light">
-              Thank you, <span className="font-bold text-olive-700">{formData.name}</span>. Sintu Decorators team will call you at <span className="text-rose-700 font-bold">{formData.phone}</span> shortly to discuss custom designs, catering, and pricing.
+              Thank you, <span className="font-bold text-olive-700">{formData.name}</span>. Your details have been recorded. You can also connect directly via:
             </p>
+
+            <div className="flex flex-col gap-3 pt-2">
+              <a
+                href={getWhatsAppUrl()}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-3 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-md"
+              >
+                Send via WhatsApp (8969207777)
+              </a>
+              <a
+                href={getEmailUrl()}
+                className="w-full py-3 px-4 rounded-xl bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-md"
+              >
+                Send via Email (sintudecorators@gmail.com)
+              </a>
+            </div>
             <div className="pt-4">
               <button
                 onClick={closeModal}

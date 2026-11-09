@@ -8,7 +8,7 @@ export const AIConsultantPage: React.FC = () => {
     {
       id: 'm-1',
       sender: 'ai',
-      text: `👋 **Namaste! I am Sintu AI Planner**, your virtual event architect at Sintu Decorators (Shiv Mandir, Mungroura, Jamalpur).\n\nHow can I assist with your event planning today?\n\n• **Minimal Small Party:** Starts @ ₹50,000\n• **Minimal Wedding Event:** Starts @ ₹1.5 Lakhs - ₹2 Lakhs\n• **Moderate Wedding + Catering:** Starts @ ₹7 Lakhs - ₹8 Lakhs+\n\n*Note: Final pricing depends on guest count, decor complexity, luxury demands, and catering food dishes.*`,
+      text: `👋 Namaste! I am Sintu AI Planner, your virtual event architect at Sintu Decorators (Shiv Mandir, Mungroura, Jamalpur).\n\nHow can I assist with your event planning today?\n\n• Minimal Small Party: Starts @ ₹50,000\n• Minimal Wedding Event: Starts @ ₹1.5 Lakhs - ₹2 Lakhs\n• Moderate Wedding + Catering: Starts @ ₹7 Lakhs - ₹8 Lakhs+\n\nNote: Final pricing depends on guest count, decor complexity, luxury demands, and catering food dishes.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -53,7 +53,7 @@ export const AIConsultantPage: React.FC = () => {
       const aiMsg: AIChatMessage = {
         id: `ai-${Date.now()}`,
         sender: 'ai',
-        text: response.reply,
+        text: response.reply ? response.reply.replace(/\*/g, '') : '',
         suggestedBudget: response.suggestedBudget,
         recommendedServices: response.recommendedServices,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -66,7 +66,7 @@ export const AIConsultantPage: React.FC = () => {
   };
 
   const handleExportToWhatsApp = (text: string) => {
-    const waUrl = `https://wa.me/919431200000?text=${encodeURIComponent(
+    const waUrl = `https://wa.me/918969207777?text=${encodeURIComponent(
       `Hi Sintu Decorators, I generated this proposal on your Sintu AI Planner:\n\n${text}`
     )}`;
     window.open(waUrl, '_blank');
@@ -134,7 +134,7 @@ export const AIConsultantPage: React.FC = () => {
                     : 'bg-rose-50 border border-rose-200 text-olive-700 rounded-tl-none'
                 }`}
               >
-                <p className="text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-light">{msg.text}</p>
+                <p className="text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-light">{msg.text.replace(/\*/g, '')}</p>
 
                 {/* AI Budget Widget Card Box */}
                 {msg.suggestedBudget && (

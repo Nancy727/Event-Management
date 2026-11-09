@@ -25,7 +25,28 @@ export const PortfolioPage: React.FC = () => {
 
   const filteredItems = activeCategory === 'all'
     ? items
-    : items.filter((i) => i.categoryId === activeCategory);
+    : items.filter((i) => {
+        const catSlug = (i.category?.slug || i.categoryId || '').toLowerCase();
+        const catName = (i.category?.name || i.title || '').toLowerCase();
+        const act = activeCategory.toLowerCase();
+
+        if (act === 'wedding') {
+          return catSlug.includes('wedding') || catName.includes('mandap') || catName.includes('wedding');
+        }
+        if (act === 'stage-reception') {
+          return catSlug.includes('stage') || catSlug.includes('reception') || catName.includes('stage') || catName.includes('reception');
+        }
+        if (act === 'flower-decor') {
+          return catSlug.includes('flower') || catName.includes('flower') || catName.includes('swing') || catName.includes('haldi') || catName.includes('floral');
+        }
+        if (act === 'tent-house') {
+          return catSlug.includes('tent') || catName.includes('tent') || catName.includes('pandal');
+        }
+        if (act === 'birthday') {
+          return catSlug.includes('birthday') || catName.includes('birthday') || catName.includes('party');
+        }
+        return catSlug === act;
+      });
 
   return (
     <div className="pt-28 pb-24 bg-white text-olive-700 min-h-screen font-sans">

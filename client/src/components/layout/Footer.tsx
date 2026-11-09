@@ -68,17 +68,19 @@ export const Footer: React.FC = () => {
             </p>
             <p className="text-xs flex items-center gap-2.5 text-olive-600">
               <Phone className="w-4 h-4 text-rose-700 shrink-0" />
-              <a href="tel:+919431200000" className="hover:text-rose-700 font-bold text-olive-700">+91 94312 00000</a>
+              <a href="tel:+918969207777" className="hover:text-rose-700 font-bold text-olive-700">+91 89692 07777</a>
             </p>
             <p className="text-xs flex items-center gap-2.5 text-olive-600">
               <MessageSquare className="w-4 h-4 text-emerald-700 shrink-0" />
-              <a href="https://wa.me/919431200000?text=Hi%20Sintu%20Decorators,%20I%20want%20to%20inquire%20about%20event%20decoration" target="_blank" rel="noreferrer" className="hover:text-emerald-700 font-bold text-emerald-800">
-                WhatsApp Sintu Ji
+              <a href="https://wa.me/918969207777?text=Hi%20Sintu%20Decorators,%20I%20want%20to%20inquire%20about%20event%20decoration" target="_blank" rel="noreferrer" className="hover:text-emerald-700 font-bold text-emerald-800">
+                WhatsApp: 8969207777
               </a>
             </p>
             <p className="text-xs flex items-center gap-2.5 text-olive-600">
               <Clock className="w-4 h-4 text-rose-700 shrink-0" />
-              <span>Mon - Sun: 8:00 AM - 10:00 PM</span>
+              <a href="mailto:sintudecorators@gmail.com" className="hover:text-rose-700 font-bold text-rose-700">
+                sintudecorators@gmail.com
+              </a>
             </p>
           </div>
         </div>

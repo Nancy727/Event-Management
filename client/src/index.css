@@ -17,14 +17,14 @@
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F7F8F5;
+  background: #F4F8F1;
 }
 ::-webkit-scrollbar-thumb {
-  background: #28351F;
+  background: #4F6543;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3D1B22;
+  background: #81434F;
 }
 
 /* Editorial Glassmorphism */
@@ -32,25 +32,25 @@
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(40, 53, 31, 0.15);
+  border: 1px solid rgba(79, 101, 67, 0.15);
 }
 
 .glass-card-rose {
-  background: rgba(244, 227, 229, 0.7);
+  background: rgba(248, 226, 230, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(61, 27, 34, 0.2);
+  border: 1px solid rgba(129, 67, 79, 0.18);
 }
 
 /* Rose & Olive Gradient Text */
 .rose-gradient-text {
-  background: linear-gradient(135deg, #3D1B22 0%, #6E3841 50%, #28351F 100%);
+  background: linear-gradient(135deg, #81434F 0%, #B06975 50%, #4F6543 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .olive-gradient-text {
-  background: linear-gradient(135deg, #28351F 0%, #4C613D 50%, #3D1B22 100%);
+  background: linear-gradient(135deg, #4F6543 0%, #6B825E 50%, #81434F 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

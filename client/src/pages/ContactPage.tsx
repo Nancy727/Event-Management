@@ -37,6 +37,11 @@ export const ContactPage: React.FC = () => {
       setLoading(false);
       setSubmitted(true);
       confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+
+      // Automatically launch WhatsApp with user inquiry details
+      const text = `Name: ${formData.name}\nPhone: ${formData.phone}\nEvent: ${formData.eventType}\nDate: ${formData.eventDate || 'N/A'}\nDetails: ${formData.message}`;
+      const waUrl = `https://wa.me/918969207777?text=${encodeURIComponent(`New Event Inquiry for Sintu Decorators:\n\n${text}`)}`;
+      window.open(waUrl, '_blank');
     } catch {
       setLoading(false);
       setSubmitted(true);
@@ -77,9 +82,9 @@ export const ContactPage: React.FC = () => {
                 <div className="flex items-start gap-3">
                   <Phone className="w-4 h-4 text-rose-700 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="block text-olive-700 font-semibold uppercase tracking-wider">Phone Call</strong>
-                    <a href="tel:+919431200000" className="text-rose-700 font-bold hover:underline">
-                      +918969207777
+                    <strong className="block text-olive-700 font-semibold uppercase tracking-wider">Direct Phone / Call</strong>
+                    <a href="tel:+918969207777" className="text-rose-700 font-bold hover:underline">
+                      +91 89692 07777
                     </a>
                   </div>
                 </div>
@@ -87,15 +92,23 @@ export const ContactPage: React.FC = () => {
                 <div className="flex items-start gap-3">
                   <MessageSquare className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="block text-olive-700 font-semibold uppercase tracking-wider">WhatsApp Chat</strong>
-                    <a
-                      href="https://wa.me/919431200000?text=Hi%20Sintu%20Decorators,%20I%20want%20to%20inquire%20about%20event%20decoration"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-emerald-700 font-bold hover:underline"
-                    >
-                      Chat with Sintu Ji on WhatsApp
-                    </a>
+                    <strong className="block text-olive-700 font-semibold uppercase tracking-wider">WhatsApp & Email</strong>
+                    <div className="mt-0.5 space-y-1">
+                      <a
+                        href="https://wa.me/918969207777?text=Hi%20Sintu%20Decorators,%20I%20want%20to%20inquire%20about%20event%20decoration"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-emerald-700 font-bold hover:underline block"
+                      >
+                        WhatsApp: 8969207777
+                      </a>
+                      <a
+                        href="mailto:sintudecorators@gmail.com"
+                        className="text-rose-700 font-bold hover:underline block"
+                      >
+                        Email: sintudecorators@gmail.com
+                      </a>
+                    </div>
                   </div>
                 </div>
 
@@ -136,10 +149,26 @@ export const ContactPage: React.FC = () => {
                   <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-700 flex items-center justify-center mx-auto">
                     <CheckCircle2 className="w-10 h-10" />
                   </div>
-                  <h3 className="font-serif text-2xl font-normal text-olive-700">Inquiry Received</h3>
+                  <h3 className="font-serif text-2xl font-normal text-olive-700">Inquiry Sent Successfully</h3>
                   <p className="text-xs text-olive-600 font-light">
-                    Thank you <span className="font-bold text-olive-700">{formData.name}</span>. Sintu Decorators team will review your requirements for <span className="text-rose-700 font-semibold">{formData.eventType}</span> and contact you shortly.
+                    Thank you <span className="font-bold text-olive-700">{formData.name}</span>. Your request for <span className="text-rose-700 font-semibold">{formData.eventType}</span> has been sent. You can also connect directly:
                   </p>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+                    <a
+                      href={`https://wa.me/918969207777?text=${encodeURIComponent(`Inquiry from ${formData.name} (${formData.phone}): ${formData.eventType} on ${formData.eventDate || 'N/A'}. ${formData.message}`)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-6 py-3 rounded-full font-bold text-xs uppercase tracking-widest bg-emerald-700 text-white hover:bg-emerald-600 shadow-md"
+                    >
+                      WhatsApp: 8969207777
+                    </a>
+                    <a
+                      href={`mailto:sintudecorators@gmail.com?subject=Inquiry from ${formData.name}&body=${encodeURIComponent(`Name: ${formData.name}\nPhone: ${formData.phone}\nEvent: ${formData.eventType}\nDate: ${formData.eventDate}\nDetails: ${formData.message}`)}`}
+                      className="px-6 py-3 rounded-full font-bold text-xs uppercase tracking-widest bg-rose-700 text-white hover:bg-rose-600 shadow-md"
+                    >
+                      Email: sintudecorators@gmail.com
+                    </a>
+                  </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -156,7 +185,7 @@ export const ContactPage: React.FC = () => {
                         placeholder="Rohan Sharma"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-3 py-2.5 text-xs bg-white border border-olive-200 rounded-xl text-olive-700 focus:border-rose-700 focus:outline-none"
+                        className="w-full px-3 py-2.5 text-xs bg-white border border-olive-200 rounded-xl text-olive-700 focus:border-rose-700 focus:outline-none font-medium"
                       />
                     </div>
 
@@ -165,10 +194,10 @@ export const ContactPage: React.FC = () => {
                       <input
                         type="tel"
                         required
-                        placeholder="+91 9876543210"
+                        placeholder="+91 89692 07777"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-3 py-2.5 text-xs bg-white border border-olive-200 rounded-xl text-olive-700 focus:border-rose-700 focus:outline-none"
+                        className="w-full px-3 py-2.5 text-xs bg-white border border-olive-200 rounded-xl text-olive-700 focus:border-rose-700 focus:outline-none font-medium"
                       />
                     </div>
                   </div>
@@ -179,7 +208,7 @@ export const ContactPage: React.FC = () => {
                       <select
                         value={formData.eventType}
                         onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
-                        className="w-full px-3 py-2.5 text-xs bg-white border border-olive-200 rounded-xl text-olive-700 focus:border-rose-700 focus:outline-none"
+                        className="w-full px-3 py-2.5 text-xs bg-white border border-olive-200 rounded-xl text-olive-700 focus:border-rose-700 focus:outline-none font-bold"
                       >
                         <option value="Wedding Decoration">Wedding & Royal Mandap</option>
                         <option value="Tent House & Pandal">Waterproof Tent House</option>
@@ -195,7 +224,7 @@ export const ContactPage: React.FC = () => {
                         type="date"
                         value={formData.eventDate}
                         onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                        className="w-full px-3 py-2.5 text-xs bg-white border border-olive-200 rounded-xl text-olive-700 focus:border-rose-700 focus:outline-none"
+                        className="w-full px-3 py-2.5 text-xs bg-white border border-olive-200 rounded-xl text-olive-700 focus:border-rose-700 focus:outline-none font-medium"
                       />
                     </div>
                   </div>
@@ -208,7 +237,7 @@ export const ContactPage: React.FC = () => {
                       placeholder="Please mention guest count, venue location (Jamalpur, Munger, Bari Daryapur), and preferred theme..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-3 py-2.5 text-xs bg-white border border-olive-200 rounded-xl text-olive-700 focus:border-rose-700 focus:outline-none"
+                      className="w-full px-3 py-2.5 text-xs bg-white border border-olive-200 rounded-xl text-olive-700 focus:border-rose-700 focus:outline-none font-medium"
                     />
                   </div>
 

@@ -1,15 +1,60 @@
 version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+
+  # ─── MongoDB (local container) ─────────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: sintu_mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=sintu
+      - MONGO_INITDB_ROOT_PASSWORD=sintu1234
+      - MONGO_INITDB_DATABASE=sintu_decorators
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  # ─── Backend (Express + Prisma) ────────────────────────────────────────────
+  backend:
+    image: node:20-alpine
+    container_name: sintu_backend
+    working_dir: /app
+    volumes:
+      - ./server:/app
+      - /app/node_modules
     ports:
       - "5000:5000"
     environment:
+      - NODE_ENV=development
       - PORT=5000
-      - NODE_ENV=production
-      - DATABASE_URL=file:./dev.db
-      - JWT_SECRET=sintu-decorators-production-secret-jwt-key
-    restart: always
+      - DATABASE_URL=mongodb://sintu:sintu1234@mongo:27017/sintu_decorators?authSource=admin
+      - JWT_SECRET=sintu-decorators-super-secret-jwt-key-2026
+      - ADMIN_EMAIL=admin@sintudecorators.com
+      - ADMIN_PASSWORD=adminpassword123
+    depends_on:
+      - mongo
+    command: sh -c "npm install && npx prisma generate && npm run dev"
+    restart: unless-stopped
+
+  # ─── Frontend (Vite + React) ───────────────────────────────────────────────
+  frontend:
+    image: node:20-alpine
+    container_name: sintu_frontend
+    working_dir: /app
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+    command: sh -c "npm install && npm run dev -- --host"
+    restart: unless-stopped
+
+# ─── Persistent volume for MongoDB data ────────────────────────────────────
+volumes:
+  mongo_data:

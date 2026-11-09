@@ -17,8 +17,10 @@ export const AdminLoginPage: React.FC = () => {
     setLoading(true);
     setError('');
 
+    const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+
     try {
-      const res = await fetch('/api/admin/login', {
+      const res = await fetch(`${API_BASE_URL}/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

@@ -142,10 +142,12 @@ const MOCK_PORTFOLIO: PortfolioMedia[] = [
   },
 ];
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+
 export const apiService = {
   async getServices(): Promise<ServiceItem[]> {
     try {
-      const res = await fetch('/api/services');
+      const res = await fetch(`${API_BASE_URL}/services`);
       if (!res.ok) throw new Error('API failed');
       const data = await res.json();
       return data.data && data.data.length > 0 ? data.data : MOCK_SERVICES;
@@ -156,7 +158,7 @@ export const apiService = {
 
   async getPortfolio(): Promise<PortfolioMedia[]> {
     try {
-      const res = await fetch('/api/portfolio');
+      const res = await fetch(`${API_BASE_URL}/portfolio`);
       if (!res.ok) throw new Error('API failed');
       const data = await res.json();
       return data.data && data.data.length > 0 ? data.data : MOCK_PORTFOLIO;
@@ -167,7 +169,7 @@ export const apiService = {
 
   async sendContactMessage(formData: any): Promise<{ success: boolean; message: string }> {
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(`${API_BASE_URL}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -180,7 +182,7 @@ export const apiService = {
 
   async consultAI(message: string): Promise<AIResponse> {
     try {
-      const res = await fetch('/api/ai/consult', {
+      const res = await fetch(`${API_BASE_URL}/ai/consult`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message }),

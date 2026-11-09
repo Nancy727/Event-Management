@@ -1,9 +1,33 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// Safely percent-encode credentials if environment variables are provided
+if (process.env.MONGO_INITDB_ROOT_USERNAME && process.env.MONGO_INITDB_ROOT_PASSWORD) {
+  const user = encodeURIComponent(process.env.MONGO_INITDB_ROOT_USERNAME);
+  const pass = encodeURIComponent(process.env.MONGO_INITDB_ROOT_PASSWORD);
+  const db = process.env.MONGO_INITDB_DATABASE || 'sintu_decorators';
+  const host = process.env.MONGO_HOST || 'mongo';
+  const port = process.env.MONGO_PORT || '27017';
+  process.env.DATABASE_URL = `mongodb://${user}:${pass}@${host}:${port}/${db}?authSource=admin`;
+}
 
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log('Checking database before seeding...');
+
+  // Safety check: do not overwrite existing production data unless FORCE_SEED=true
+  const existingCategories = await prisma.category.count();
+  const existingAdmins = await prisma.admin.count();
+  if ((existingCategories > 0 || existingAdmins > 0) && process.env.FORCE_SEED !== 'true') {
+    console.log('⚠️ Database already contains existing data. Skipping seed to prevent data loss.');
+    console.log('To force re-seeding and overwrite data, run with FORCE_SEED=true.');
+    return;
+  }
+
   console.log('Seeding Sintu Decorators database...');
 
   // Clean existing tables

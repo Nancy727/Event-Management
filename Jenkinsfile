@@ -1,12 +1,18 @@
+
 pipeline {
     agent any
 
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+
     options {
         timestamps()
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '5'))
     }
 
     stages {
-
         stage('Checkout Verification') {
             steps {
                 echo 'Checking out Sintu Decorators source code...'
@@ -23,16 +29,15 @@ pipeline {
                 sh 'test -d server && echo "Backend directory found"'
             }
         }
-
     }
 
     post {
         success {
-            echo 'Initial Jenkins pipeline completed successfully!'
+            echo 'Sintu Decorators CI pipeline completed successfully!'
         }
 
         failure {
-            echo 'Jenkins pipeline failed. Check the console output.'
+            echo 'Pipeline failed. Check the console output.'
         }
     }
 }

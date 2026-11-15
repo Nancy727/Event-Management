@@ -44,11 +44,28 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy to EC2') {
+            steps {
+                echo 'Deploying Sintu Decorators to AWS EC2...'
+
+                sh '''
+                    ssh \
+                    -i /var/jenkins_home/.ssh/sintu_deploy_key \
+                    -o BatchMode=yes \
+                    -o IdentitiesOnly=yes \
+                    -o StrictHostKeyChecking=yes \
+                    -o ConnectTimeout=10 \
+                    deploy@172.17.0.1 \
+                    "sudo /usr/local/bin/deploy-sintu.sh"
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo 'Sintu Decorators CI and security scan completed!'
+            echo 'Sintu Decorators CI/CD pipeline completed successfully!'
         }
 
         failure {

@@ -62,11 +62,67 @@ services:
       - backend
     networks:
       - sintu_network
+  
+  # ─── Prometheus Monitoring ─────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: sintu_prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=3d'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - sintu_network
+    depends_on:
+      - node-exporter
+    ports:
+      - "127.0.0.1:9090:9090"
+
+  # ─── EC2 Host Metrics ───────────────────────────────────
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: sintu_node_exporter
+    restart: unless-stopped
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - /:/host:ro,rslave
+    networks:
+      - sintu_network
+
+
+  # ─── Grafana Dashboards ─────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: sintu_grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: '${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env}'
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - sintu_network
+    depends_on:
+      - prometheus
+    ports:
+      - "127.0.0.1:3000:3000"
+
 
 # ─── Persistent Volumes ─────────────────────────────────────────────────────
 volumes:
   mongo_data:
     name: sintu_mongo_data
+  prometheus_data:
+    name: sintu_prometheus_data
+
+  grafana_data:
+    name: sintu_grafana_data
 
 # ─── Internal Bridge Network ────────────────────────────────────────────────
 networks:

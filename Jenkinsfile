@@ -13,6 +13,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout Verification') {
             steps {
                 echo 'Checking out Sintu Decorators source code...'
@@ -29,11 +30,25 @@ pipeline {
                 sh 'test -d server && echo "Backend directory found"'
             }
         }
+
+        stage('Trivy Filesystem Security Scan') {
+            steps {
+                echo 'Scanning project for vulnerabilities, secrets and misconfigurations...'
+
+                sh '''
+                    trivy fs \
+                    --scanners vuln,secret,misconfig \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 0 \
+                    .
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo 'Sintu Decorators CI pipeline completed successfully!'
+            echo 'Sintu Decorators CI and security scan completed!'
         }
 
         failure {

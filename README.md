@@ -94,3 +94,5 @@ docker-compose up -d --build
 ```
 
 After the containers start, open the frontend on `http://localhost:3000`.
+
+Jenkins SCM polling test.

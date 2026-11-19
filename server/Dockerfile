@@ -1,4 +1,4 @@
-# Stage 1: Build
+
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -14,8 +14,6 @@ RUN npx prisma generate
 COPY . .
 RUN npm run build
 
-
-# Stage 2: Production Runtime
 FROM node:20-alpine AS runner
 
 WORKDIR /app

@@ -1,0 +1,217 @@
+
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+  Sintu Decorators - Cost-conscious AWS infrastructure
+  with custom VPC, public subnet, security group and EC2.
+
+Parameters:
+
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Select the EC2 key pair created earlier.
+    Default: sintu-decorators-key
+
+  InstanceType:
+    Type: String
+    Description: EC2 instance size.
+    Default: t3.small
+    AllowedValues:
+      - t3.small
+
+  MyIPAddress:
+    Type: String
+    Description: Your public IPv4 address with /32.
+    Default: 117.251.86.142/32
+
+  LatestUbuntuAmi:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id
+
+Resources:
+
+  # 1. Custom VPC
+  SintuVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: Sintu-Decorators-VPC
+
+  # 2. Public Subnet
+  SintuPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SintuVPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs ''
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Sintu-Decorators-Public-Subnet
+
+  # 3. Internet Gateway
+  SintuInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Sintu-Decorators-IGW
+
+  # 4. Attach Internet Gateway
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref SintuVPC
+      InternetGatewayId: !Ref SintuInternetGateway
+
+  # 5. Public Route Table
+  SintuPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref SintuVPC
+      Tags:
+        - Key: Name
+          Value: Sintu-Decorators-Public-RT
+
+  # 6. Internet Route
+  SintuPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref SintuPublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref SintuInternetGateway
+
+  # 7. Subnet Route Association
+  SintuSubnetRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SintuPublicSubnet
+      RouteTableId: !Ref SintuPublicRouteTable
+
+  # 8. Security Group
+  SintuSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Restricted SSH and Jenkins; public website.
+      VpcId: !Ref SintuVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MyIPAddress
+          Description: SSH from my IP only
+
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: !Ref MyIPAddress
+          Description: Jenkins from my IP only
+
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: Public website HTTP
+
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+
+      Tags:
+        - Key: Name
+          Value: Sintu-Decorators-SG
+
+  # 9. IAM Role for Systems Manager
+  SintuEC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Tags:
+        - Key: Name
+          Value: Sintu-Decorators-EC2-Role
+
+  # 10. Instance Profile
+  SintuInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref SintuEC2Role
+
+  # 11. EC2 Instance
+  SintuEC2Instance:
+    Type: AWS::EC2::Instance
+    DependsOn:
+      - SintuPublicRoute
+      - SintuSubnetRouteAssociation
+    Properties:
+      ImageId: !Ref LatestUbuntuAmi
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyPairName
+      IamInstanceProfile: !Ref SintuInstanceProfile
+      CreditSpecification:
+        CPUCredits: standard
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: '0'
+          SubnetId: !Ref SintuPublicSubnet
+          GroupSet:
+            - !Ref SintuSecurityGroup
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 20
+            VolumeType: gp3
+            Encrypted: true
+            DeleteOnTermination: true
+      Tags:
+        - Key: Name
+          Value: Sintu-Decorators-Server
+        - Key: Project
+          Value: Sintu-Decorators
+
+Outputs:
+
+  VPCID:
+    Description: Created VPC ID
+    Value: !Ref SintuVPC
+
+  PublicSubnetID:
+    Description: Created public subnet ID
+    Value: !Ref SintuPublicSubnet
+
+  SecurityGroupID:
+    Description: EC2 security group ID
+    Value: !Ref SintuSecurityGroup
+
+  InstanceID:
+    Description: EC2 instance ID
+    Value: !Ref SintuEC2Instance
+
+  PublicIPAddress:
+    Description: EC2 public IPv4 address
+    Value: !GetAtt SintuEC2Instance.PublicIp
+
+  WebsiteURL:
+    Description: Website URL after application deployment
+    Value: !Sub 'http://${SintuEC2Instance.PublicIp}'
+
+  JenkinsURL:
+    Description: Jenkins URL after Jenkins installation
+    Value: !Sub 'http://${SintuEC2Instance.PublicIp}:8080'

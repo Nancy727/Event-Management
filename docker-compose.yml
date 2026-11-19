@@ -113,8 +113,6 @@ services:
     ports:
       - "127.0.0.1:3000:3000"
 
-
-# ─── Persistent Volumes ─────────────────────────────────────────────────────
 volumes:
   mongo_data:
     name: sintu_mongo_data
@@ -124,7 +122,6 @@ volumes:
   grafana_data:
     name: sintu_grafana_data
 
-# ─── Internal Bridge Network ────────────────────────────────────────────────
 networks:
   sintu_network:
     name: sintu_internal_network
